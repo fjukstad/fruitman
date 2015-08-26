@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -29,10 +30,19 @@ func FileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func SubmitHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	fruit := vars["fruit"]
 
-	fmt.Println(fruit)
+	f, err := os.OpenFile("results.csv", os.O_RDWR|os.O_APPEND, 0660)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+
+	fruit := r.PostFormValue("fruit")
+
+	_, err = f.WriteString(fruit + "\n")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
 
 }
 
@@ -47,8 +57,7 @@ func main() {
 	r.HandleFunc("/", FileHandler)
 	r.HandleFunc("/{filename}", FileHandler)
 
-	r.HandleFunc("/submit/{fruit}", SubmitHandler)
-	r.HandleFunc("/getResults", GetResultsHandler)
+	r.HandleFunc("/submit/", SubmitHandler)
 
 	http.Handle("/", r)
 

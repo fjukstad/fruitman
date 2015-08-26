@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8" /> 
 <meta name="viewport" content="width=device-width, heigth=device-height" >
+
+<script src="d3.js"></script>
+<script src="jquery-2.1.4.js"></script>
+
 <style>
 body { 
     margin-top:0px;
@@ -39,9 +43,141 @@ div {
     top: 0;
     bottom 0;
 }
+
+h1 {
+    font-size: 5em;
+    text-align: center;
+    color: #de7c00; 
+}
+
 </style> 
 
 <div>
 <img src="top.png" class="top-logo">
+<h1> Stem på din favorittfrukt! </h1>
+
+<svg class="barchart"></svg> 
+
+<script>
+
+    var fruits = []; 
+    var fruitMap = {}; 
+
+    var f = ["eple", "drue", "banan", "appelsin", "pære", "mango", "melon"]
+    for(var i = 0; i < f.length; i++){
+        fruits.push({name: f[i], score: 0})
+    }
+
+    var keymap = {
+            32: "melon",
+            65: "eple", 
+            68: "drue",
+            69: "banan",
+            83: "appelsin",
+            70: "pære",
+            71: "mango",
+    }
+    
+
+
+
+    var barwidth = 50;
+    var height = 500;
+    var width = 500; 
+    var barmargin = 1.2;
+
+                
+    var chart = d3.select(".barchart")
+                    .attr("height", height)
+                    .attr("width", width);
+
+    var bar; 
+
+    var maxScore = 0; 
+    var scores = Array(f.length) 
+    for(var i = 0; i < f.length; i++){
+        scores[i] = 0; 
+        fruitMap[f[i]] = i; 
+    }
+
+
+    d3.csv("results.csv")
+        .row(function(d) { 
+            fruit = d[Object.keys(d)[0]]
+            console.log(fruits, fruit) 
+            
+            index = fruitMap[fruit];
+            scores[index]++ 
+
+        })
+
+        .get(function(error, rows){
+            update() 
+        })
+
+    function update() {
+
+         console.log(scores)
+             var maxScore = Math.max.apply(null, scores)
+            
+            var y = d3.scale.linear()
+                    .range([0, height])
+                    .domain([0, maxScore])
+                        
+            // update   
+            bar = chart.selectAll("g")
+                        .data(scores);
+
+            bar.attr("transform", function(d,i){
+                var h = height - y(d)
+                var w = i*barwidth*barmargin; 
+                return "translate("+w+","+h+")";
+            }); 
+
+            bar.select("rect")
+                .attr("height", function(d){
+                        return y(d)
+                })
+                        
+            barEnter = bar.enter()
+                .append("g")
+                .attr("transform", function(d,i){
+                    var h = height - y(d)
+                    var w = i*barwidth*barmargin; 
+                    return "translate("+w+","+h+")";
+                }); 
+            
+
+            barEnter.append("rect")
+                .attr("width", barwidth)
+                .attr("height", function(d){
+                    return y(d)
+                });
+            
+            barEnter.append("text")
+                .text(function(d,i){
+                    return f[i];
+                })
+
+            bar.exit().remove()
+
+
+    }
+
+    d3.select("body")
+        .on("keydown", function(){
+                fruit = keymap[d3.event.keyCode]
+                if(typeof fruit != "undefined"){
+                    $.post("/submit/", {fruit:fruit}); 
+                    index = fruitMap[fruit];
+                    scores[index]++ 
+                }
+
+                update() 
+            }); 
+
+</script>
+
+
 <img src="bottom.png" class="bottom-logo">
 </div> 
