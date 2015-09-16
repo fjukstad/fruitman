@@ -61,5 +61,7 @@ func main() {
 
 	http.Handle("/", r)
 
+	fmt.Println("Server started at 0.0.0.0:8080")
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
