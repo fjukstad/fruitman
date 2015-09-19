@@ -73,7 +73,7 @@ svg.barchart {
     var fruits = []; 
     var fruitMap = {}; 
 
-    var f = ["eple", "drue", "banan", "appelsin", "pære", "mango", "melon"]
+    var f = ["Eple", "Drue", "Banan", "Appelsin", "Pære", "Mango", "Melon"]
     var color = [ "#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854", "#ffd92f", "#e5c494"]
 
     for(var i = 0; i < f.length; i++){
@@ -83,13 +83,13 @@ svg.barchart {
     var ok2vote = true 
 
     var keymap = {
-            87: "melon",
-            65: "eple", 
-            68: "drue",
-            32: "banan",
-            83: "appelsin",
-            70: "pære",
-            71: "mango",
+            87: "Melon",
+            65: "Eple", 
+            68: "Drue",
+            32: "Banan",
+            83: "Appelsin",
+            70: "Pære",
+            71: "Mango",
     }
     
 
@@ -201,18 +201,23 @@ svg.barchart {
     d3.select("body")
         .on("keydown", function(){
 
-                if(!ok2vote) { 
-                    return 
-                }
+                    if(!ok2vote) { 
+                        return 
+                    }
 
-                numVotes ++; 
+
                 console.log(d3.event.keyCode)
                 fruit = keymap[d3.event.keyCode]
                 console.log(fruit)
                 if(typeof fruit != "undefined"){
+                    
+
                     $.post("/submit/", {fruit:fruit}); 
                     index = fruitMap[fruit];
                     scores[index]++ 
+                    numVotes ++; 
+                } else {
+                    return
                 }
 
                 ok2vote = false 
