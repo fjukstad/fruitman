@@ -44,6 +44,8 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error:", err)
 	}
 
+	f.Close()
+
 }
 
 func GetResultsHandler(w http.ResponseWriter, r *http.Request) {
