@@ -60,7 +60,33 @@ svg.barchart {
     margin-right: auto;
 
 }
+#thanks { 
+    cursor: pointer;
+    z-index: 3;
+    right: 0px;
+    top: 0px;
+    position: absolute;
+    background-color:green;
+    opacity: 0.99; 
+    display: none;
+}
 
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-40%);
+}
+
+h1.thanks { 
+    color: white;
+    font-size: 10em;
+}
+
+
+p#vote-item {
+    color:white
+}
 </style> 
 
 <div> 
@@ -109,6 +135,8 @@ svg.barchart {
     var chart = d3.select(".barchart")
                     .attr("height", height)
                     .attr("width", width);
+
+    var color; 
 
     var bar; 
 
@@ -221,15 +249,22 @@ svg.barchart {
 
                 ok2vote = false 
 
-                d3.selectAll("h1")
-                    .text("Takk for din stemme!") 
+                //d3.selectAll("h1")
+                //    .text("Takk for din stemme!") 
+
+                d3.selectAll("p#vote-item").text("Du stemte på " + fruit.toLowerCase()) 
+
+                d3.selectAll("#thanks")
+                        .style("display", "block")
+                        .style("background-color", color[fruitMap[fruit]])
 
                 d3.selectAll("h2")
                     .text("Totalt "+numVotes+" stemmer") 
                     
                 setTimeout(function(){
-                    d3.selectAll("h1")
-                        .text("Stem på din favoritt!") 
+                    //d3.selectAll("h1")
+                    //    .text("Stem på din favoritt!") 
+                    d3.selectAll("#thanks").style("display","none")
                     ok2vote=true;
 
 
@@ -242,4 +277,11 @@ svg.barchart {
 
 <h2> Totalt 0 stemmer </h2> 
 <img src="bottom.png" class="bottom-logo">
+</div> 
+
+<div id="thanks">
+    <div class="container">
+        <h1 class="thanks"> Takk for din stemme! <h1> 
+        <p id="vote-item"></p>
+    </div>
 </div> 
